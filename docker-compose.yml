@@ -3,10 +3,11 @@ version: '3'
 services:
   poll:
     build: ./poll
+    restart: always
     ports:
       - "5000:80"
     environment:
-      - REDIS_HOST=0.0.0.0
+      - REDIS_HOST=redis
     depends_on:
       - redis
     networks:
@@ -14,7 +15,8 @@ services:
   
   redis:
     image: "redis:7-alpine"
-    ports:
+    restart: always
+    expose:
       - 6379
     networks:
       - poll-tier
@@ -22,9 +24,13 @@ services:
   
   db:
     image: "postgres:16"
+    restart: always
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=postgres
+      - POSTGRES_DB=votes
+    expose:
+      - 5432
     networks:
       - result-tier
       - back-tier
@@ -34,24 +40,31 @@ services:
   
   result:
     build: ./result
+    restart: always
     ports:
       - "5001:80"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=votes
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
     depends_on:
       - db
     networks:
       - result-tier
-      - back-tier
   
   worker:
+    restart: always
     build: ./worker
     depends_on:
-      - db
       - redis
+      - db
     networks:
       - back-tier
     environment:
-      - REDIS_HOST=0.0.0.0
-      - POSTGRES_HOST=0.0.0.0
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - POSTGRES_DB=votes
       - POSTGRES_PASSWORD=password
