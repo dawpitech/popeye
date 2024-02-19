@@ -41,6 +41,21 @@ services:
     networks:
       - result-tier
       - back-tier
+  
+  worker:
+    build: ./worker
+    depends_on:
+      - db
+      - redis
+    networks:
+      - back-tier
+    environment:
+      - REDIS_HOST=0.0.0.0
+      - POSTGRES_HOST=0.0.0.0
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=votes
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
 
 volumes:
   db-data:
