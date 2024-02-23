@@ -55,8 +55,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=postgres
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - result-tier
   
@@ -64,10 +63,8 @@ services:
     restart: always
     build: ./worker
     depends_on:
-      redis:
-        condition: service_started
-      db:
-        condition: service_healthy
+      - redis
+      - db
     networks:
       - back-tier
     environment:
