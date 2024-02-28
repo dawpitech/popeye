@@ -8,7 +8,7 @@ import json
 option_a = os.getenv('OPTION_A', "Ansible")
 option_b = os.getenv('OPTION_B', "Chef")
 option_c = os.getenv('OPTION_C', "Puppet")
-option_d = os.getenv('OPTION_B', "SaltStack")
+option_d = os.getenv('OPTION_D', "SaltStack")
 hostname = socket.gethostname()
 
 app = Flask(__name__)
